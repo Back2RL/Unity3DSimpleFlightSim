@@ -45,15 +45,14 @@ public class WingComponent : MonoBehaviour
         Vector3 movUpDir = Vector3.Cross(movForwardDir, movRightDir);           // Movement Up-Direction Vector (from Movement Direction and Movement Right-Direction)
 
         // Wing Lift
-
         float liftCoefficient = Vector3.Dot(transform.up, movForwardDir);                                               // cl: temporary lift Coefficient from angle of attack
-        float liftForce = -liftCoefficient * lift * 1.2041f * 0.5f * currVel.sqrMagnitude * wingArea;                                    // cl * density / 2 * v² * A (lift = multiplier * density/2)
+        float liftForce = -liftCoefficient * lift * 1.2041f * 0.5f * currVel.sqrMagnitude * wingArea;                   // cl * density / 2 * v² * A (lift = multiplier * density/2)
         aircraftBody.AddForceAtPosition(movUpDir * liftForce, transform.position, ForceMode.Force);
 
-        // direction of drag
+        // direction of airresistance
         Vector3 dragDir = -movForwardDir;
 
-        // Wing Drag
+        // Wing airresistance
         float resistanceCoefficient = Mathf.Abs(Vector3.Dot(transform.up, movForwardDir));                              // cw: temporary resistance Coefficient from angle of attack
         float resistanceForceMagnitude = resistanceCoefficient * drag * currVel.sqrMagnitude * wingArea;                // cw * density / 2 * v² * A (drag = multiplier * density/2)
         aircraftBody.AddForceAtPosition(dragDir * resistanceForceMagnitude, transform.position, ForceMode.Force);

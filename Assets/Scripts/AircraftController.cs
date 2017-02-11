@@ -14,7 +14,7 @@ public class AircraftController : MonoBehaviour
     public bool inputEnabled = true;
     public float switchToInvertedControlsAngle = 135.0f;
     private float _precalculatedAngle;
-    public float gravityReductionFactor = 0.001f;
+    public float rollSensitivity = 0.001f;
 
     // Aerodynamics
     private Rigidbody _aircraft;
@@ -28,6 +28,8 @@ public class AircraftController : MonoBehaviour
     // Wings
     public GameObject LeftWing;
     public GameObject RightWing;
+    public float rollExponent = 0.5f;
+    public AnimationCurve rollInputCurve;
 
     // Elevator
     public GameObject Elevator;
@@ -40,6 +42,15 @@ public class AircraftController : MonoBehaviour
     // UI
     public Text thrustInputText;
     public Text currentForwardSpeedText;
+
+
+    // DEBUGGING
+    public Vector3 localMovementDir;
+    public Vector3 localTargetDir;
+    public Vector3 localAircraftfoward;
+    public Vector3 rightProjection;
+    public float rightSlipMagnitude;
+    public float direction;
 
 
     // Use this for initialization
@@ -60,6 +71,7 @@ public class AircraftController : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 currVel = _aircraft.velocity; // current Velocity in Globalspace
+        Vector3 globalMovementDir = currVel.normalized;
 
         if (inputEnabled)
         {
@@ -72,14 +84,12 @@ public class AircraftController : MonoBehaviour
             mouseDirection.z = 1.0f;
 
             Vector3 targetDirection = camera.transform.TransformDirection(mouseDirection);
-
-            Debug.DrawRay(camera.transform.position, targetDirection * 1000, Color.blue);
-
-            // gravity reduction
-            targetDirection -= Physics.gravity * gravityReductionFactor;
-
+            
+            // test gravity reduction
+            //targetDirection -= Physics.gravity * rollSensitivity;
 
             targetDirection.Normalize();
+            Debug.DrawRay(camera.transform.position, targetDirection * 1000, Color.blue);
 
             Vector3 movDir = currVel.normalized;
 
@@ -100,9 +110,36 @@ public class AircraftController : MonoBehaviour
                 dotTargetAircraftRight = Vector3.Dot(_aircraft.transform.right, targetDirection);
             }
 
+            // --------------
+            // project globalMovementDirection to localMovementDirection
+            localMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
+
+            // project globalTargetDirection to localMovementDirection
+            localTargetDir = _aircraft.transform.InverseTransformDirection(targetDirection);
+
+            localAircraftfoward = Vector3.forward;
+           
+            Vector3 movementAxis = Vector3.ProjectOnPlane(localMovementDir, Vector3.forward);
+
+            // check for x-movement (project localMovementDir onto aircraft-right-vector
+
+            Debug.DrawRay(_aircraft.transform.position, _aircraft.transform.TransformDirection(movementAxis * 1000), Color.cyan);
+
+            // direction = Mathf.Sign(Vector3.Dot(rightProjection, localMovementDir));
+            Vector3.Dot(movementAxis, Vector3.right);
+            rightSlipMagnitude = Vector3.Dot(movementAxis, Vector3.right);
+
+           // rightSlipMagnitude = /*direction * rightProjection.magnitude*/ Mathf.Clamp(movementAxis.x * rollSensitivity, -1.0f, 1.0f);
+
+            //dotTargetAircraftRight = Mathf.Clamp(rightSlipMagnitude, -1.0f, 1.0f);
+            //-------------
+
 
             float pitch = -Mathf.Sign(dotTargetAircraftUp) * Mathf.Pow(Mathf.Abs(dotTargetAircraftUp), pitchExponent);
-            float roll = -dotTargetAircraftRight;
+            //float roll = rightSlipMagnitude;
+            //float roll = Mathf.Sign(rightSlipMagnitude) * Mathf.Pow(Mathf.Abs(rightSlipMagnitude), rollExponent);
+
+            float roll = rollInputCurve.Evaluate(rightSlipMagnitude);
 
             if (Math.Abs(Input.GetAxis("Horizontal")) > Mathf.Abs(roll))
             {
