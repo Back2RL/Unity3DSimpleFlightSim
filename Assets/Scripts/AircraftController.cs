@@ -110,7 +110,7 @@ public class AircraftController : MonoBehaviour
                 dotTargetAircraftRight = Vector3.Dot(_aircraft.transform.right, targetDirection);
             }
 
-            // --------------
+           
             // project globalMovementDirection to localMovementDirection
             localMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
 
