@@ -88,7 +88,6 @@ public class AircraftController : MonoBehaviour
 
             Vector3 targetDirection = camera.transform.TransformDirection(mouseDirection);
 
-
             targetDirection.Normalize();
             Debug.DrawRay(camera.transform.position, targetDirection * 1000, Color.blue);
 
