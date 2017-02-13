@@ -243,4 +243,4 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   lift: 3
-  drag: 0.5
+  drag: 0.2

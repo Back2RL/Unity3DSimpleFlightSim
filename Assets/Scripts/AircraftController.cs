@@ -16,6 +16,9 @@ public class AircraftController : MonoBehaviour
     private float _precalculatedAngle;
     public float rollSensitivity = 0.001f;
 
+    public bool gravityCompensation = false;
+    private bool _keyPressedPreviousTick = false;
+
     // Aerodynamics
     private Rigidbody _aircraft;
 
@@ -49,7 +52,7 @@ public class AircraftController : MonoBehaviour
     public Vector3 localTargetDir;
     public Vector3 localAircraftfoward;
     public Vector3 rightProjection;
-    public float rightSlipMagnitude;
+    public float xDirectionDrift;
     public float direction;
 
 
@@ -84,9 +87,7 @@ public class AircraftController : MonoBehaviour
             mouseDirection.z = 1.0f;
 
             Vector3 targetDirection = camera.transform.TransformDirection(mouseDirection);
-            
-            // test gravity reduction
-            //targetDirection -= Physics.gravity * rollSensitivity;
+
 
             targetDirection.Normalize();
             Debug.DrawRay(camera.transform.position, targetDirection * 1000, Color.blue);
@@ -110,61 +111,69 @@ public class AircraftController : MonoBehaviour
                 dotTargetAircraftRight = Vector3.Dot(_aircraft.transform.right, targetDirection);
             }
 
-           
-            // project globalMovementDirection to localMovementDirection
-            localMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
+            // TESTING
+            bool isKeyDown = !Input.GetKeyUp("x");
+            if (!isKeyDown && _keyPressedPreviousTick)
+            {
+                gravityCompensation = !gravityCompensation;
+            }
+            _keyPressedPreviousTick = isKeyDown;
+            // \TESTING
+            if (gravityCompensation)
+            {
+                { // Roll input using yaw-drift compensation to negate the effect of gravity
 
-            // project globalTargetDirection to localMovementDirection
-            localTargetDir = _aircraft.transform.InverseTransformDirection(targetDirection);
+                    // project globalMovementDirection to localMovementDirection
+                    localMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
 
-            localAircraftfoward = Vector3.forward;
-           
-            Vector3 movementAxis = Vector3.ProjectOnPlane(localMovementDir, Vector3.forward);
+                    // project globalTargetDirection to localMovementDirection
+                    localTargetDir = _aircraft.transform.InverseTransformDirection(targetDirection);
 
-            // check for x-movement (project localMovementDir onto aircraft-right-vector
+                    // project localMovementDir to local Right-Up-plane using the Forward-direction as normal
+                    Vector3 localDriftVelocity = Vector3.ProjectOnPlane(localMovementDir, Vector3.forward);
 
-            Debug.DrawRay(_aircraft.transform.position, _aircraft.transform.TransformDirection(movementAxis * 1000), Color.cyan);
+                    // Draw Debug ray
+                    Debug.DrawRay(_aircraft.transform.position,
+                        _aircraft.transform.TransformDirection(localDriftVelocity * 1000), Color.cyan);
 
-            // direction = Mathf.Sign(Vector3.Dot(rightProjection, localMovementDir));
-            Vector3.Dot(movementAxis, Vector3.right);
-            rightSlipMagnitude = Vector3.Dot(movementAxis, Vector3.right);
+                    // calculate the amount of Drift in Right-Direction
+                    xDirectionDrift = Vector3.Dot(localDriftVelocity, Vector3.right);
+                }
+            }
+            else
+            {
+                // direct input using target direction, without gravity compensation
+                float directRollInput = -Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), rollExponent);
 
-           // rightSlipMagnitude = /*direction * rightProjection.magnitude*/ Mathf.Clamp(movementAxis.x * rollSensitivity, -1.0f, 1.0f);
+                xDirectionDrift = directRollInput;
+            }
 
-            //dotTargetAircraftRight = Mathf.Clamp(rightSlipMagnitude, -1.0f, 1.0f);
-            //-------------
-
-
+            // pitch controlinput TODO: add curve
             float pitch = -Mathf.Sign(dotTargetAircraftUp) * Mathf.Pow(Mathf.Abs(dotTargetAircraftUp), pitchExponent);
-            //float roll = rightSlipMagnitude;
-            //float roll = Mathf.Sign(rightSlipMagnitude) * Mathf.Pow(Mathf.Abs(rightSlipMagnitude), rollExponent);
 
-            float roll = rollInputCurve.Evaluate(rightSlipMagnitude);
+            // roll controlinput from curve
+            float roll = rollInputCurve.Evaluate(xDirectionDrift);
 
+            // yaw controlinput TODO: add curve
+            float yaw = Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), yawExponent);
+
+            // check for override by player (using direct keyinputs)
             if (Math.Abs(Input.GetAxis("Horizontal")) > Mathf.Abs(roll))
             {
+                // set player input to be controlinput
                 roll = -Input.GetAxis("Horizontal");
             }
 
-            float yaw = Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), yawExponent);
 
 
-            Elevator.transform.rotation =
-                Quaternion.LookRotation(_aircraft.transform.forward + _aircraft.transform.up * pitch,
-                    _aircraft.transform.up + _aircraft.transform.forward * pitch);
-            LeftWing.transform.localRotation =
-                Quaternion.LookRotation(new Vector3(0, 1, 0) + new Vector3(0, 0, 1) * roll,
-                    new Vector3(0, 0, -1) + new Vector3(0, 1, 0) * roll);
-            RightWing.transform.localRotation =
-                Quaternion.LookRotation(new Vector3(0, 1, 0) + new Vector3(0, 0, 1) * -roll,
-                    new Vector3(0, 0, -1) + new Vector3(0, 1, 0) * -roll);
+            Elevator.transform.rotation = Quaternion.LookRotation(_aircraft.transform.forward + _aircraft.transform.up * pitch, _aircraft.transform.up + _aircraft.transform.forward * pitch);
+            LeftWing.transform.localRotation = Quaternion.LookRotation(new Vector3(0, 1, 0) + new Vector3(0, 0, 1) * roll, new Vector3(0, 0, -1) + new Vector3(0, 1, 0) * roll);
+            RightWing.transform.localRotation = Quaternion.LookRotation(new Vector3(0, 1, 0) + new Vector3(0, 0, 1) * -roll, new Vector3(0, 0, -1) + new Vector3(0, 1, 0) * -roll);
+            Rudder.transform.localRotation = Quaternion.LookRotation(new Vector3(0, 0, 1) + new Vector3(1, 0, 0) * -yaw, new Vector3(-1, 0, 0));
 
-            Rudder.transform.localRotation = Quaternion.LookRotation(
-                new Vector3(0, 0, 1) + new Vector3(1, 0, 0) * -yaw, new Vector3(-1, 0, 0));
             // Thrusters
             float thrustDelta = Input.GetAxis("Vertical") * Time.fixedDeltaTime * thrustBlendSpeed;
             _engineThrottle = Mathf.Clamp(_engineThrottle + thrustDelta, 0, 1);
-
             foreach (GameObject thruster in thrusters)
             {
                 _aircraft.AddForceAtPosition(thruster.transform.forward * maxThrust * _engineThrottle,
