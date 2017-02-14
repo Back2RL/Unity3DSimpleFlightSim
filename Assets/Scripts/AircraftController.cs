@@ -25,7 +25,7 @@ public class AircraftController : MonoBehaviour
     // Engine
     public GameObject[] thrusters;
     public float maxThrust = 10000.0f;
-    public float thrustBlendSpeed = 0.25f; // how fast thrust increases/decreases (default: 4 seconds to max thrust)
+    public float thrustBlendSpeed = 0.25f; // how fast thrustMax increases/decreases (default: 4 seconds to max thrustMax)
     private float _engineThrottle;
 
     // Wings
@@ -122,10 +122,10 @@ public class AircraftController : MonoBehaviour
             {
                 { // Roll input using yaw-drift compensation to negate the effect of gravity
 
-                    // project globalMovementDirection to localMovementDirection
+                    // convert globalMovementDirection to localMovementDirection
                     localMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
 
-                    // project globalTargetDirection to localMovementDirection
+                    // convert globalTargetDirection to localMovementDirection
                     localTargetDir = _aircraft.transform.InverseTransformDirection(targetDirection);
 
                     // project localMovementDir to local Right-Up-plane using the Forward-direction as normal
