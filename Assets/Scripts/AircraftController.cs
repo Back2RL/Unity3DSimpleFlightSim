@@ -156,14 +156,8 @@ public class AircraftController : MonoBehaviour
             // yaw controlinput TODO: add curve
             float yaw = Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), yawExponent);
 
-            // check for override by player (using direct keyinputs)
-            if (Math.Abs(Input.GetAxis("Horizontal")) > Mathf.Abs(roll))
-            {
-                // set player input to be controlinput
-                roll = -Input.GetAxis("Horizontal");
-            }
-
-
+            // add player Keyinput
+            roll = Mathf.Clamp(roll - 2 * Input.GetAxis("Horizontal"), -1.0f, 1.0f);
 
             Elevator.transform.rotation = Quaternion.LookRotation(_aircraft.transform.forward + _aircraft.transform.up * pitch, _aircraft.transform.up + _aircraft.transform.forward * pitch);
             LeftWing.transform.localRotation = Quaternion.LookRotation(new Vector3(0, 1, 0) + new Vector3(0, 0, 1) * roll, new Vector3(0, 0, -1) + new Vector3(0, 1, 0) * roll);

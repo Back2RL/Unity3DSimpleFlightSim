@@ -1,0 +1,158 @@
+fileFormatVersion: 2
+guid: a84846e2358730c498669656a93e114d
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Antenna
+    100002: BoosterWing
+    100004: Canopy
+    100006: //RootNode
+    100008: Rudder
+    100010: RudderDetail
+    100012: WingsFuselageNoCanopyTEST
+    100014: WingsFuselageNoCanopyTEST_MeshPart0
+    100016: WingsFuselageNoCanopyTEST_MeshPart1
+    100018: WingsFuselageNoCanopyTEST_MeshPart2
+    100020: WingsFuselageNoCanopyTEST_MeshPart3
+    100022: WingsFuselageNoCanopyTEST_MeshPart4
+    400000: Antenna
+    400002: BoosterWing
+    400004: Canopy
+    400006: //RootNode
+    400008: Rudder
+    400010: RudderDetail
+    400012: WingsFuselageNoCanopyTEST
+    400014: WingsFuselageNoCanopyTEST_MeshPart0
+    400016: WingsFuselageNoCanopyTEST_MeshPart1
+    400018: WingsFuselageNoCanopyTEST_MeshPart2
+    400020: WingsFuselageNoCanopyTEST_MeshPart3
+    400022: WingsFuselageNoCanopyTEST_MeshPart4
+    2300000: Antenna
+    2300002: BoosterWing
+    2300004: Canopy
+    2300006: Rudder
+    2300008: RudderDetail
+    2300010: WingsFuselageNoCanopyTEST_MeshPart0
+    2300012: WingsFuselageNoCanopyTEST_MeshPart1
+    2300014: WingsFuselageNoCanopyTEST_MeshPart2
+    2300016: WingsFuselageNoCanopyTEST_MeshPart3
+    2300018: WingsFuselageNoCanopyTEST_MeshPart4
+    3300000: Antenna
+    3300002: BoosterWing
+    3300004: Canopy
+    3300006: Rudder
+    3300008: RudderDetail
+    3300010: WingsFuselageNoCanopyTEST_MeshPart0
+    3300012: WingsFuselageNoCanopyTEST_MeshPart1
+    3300014: WingsFuselageNoCanopyTEST_MeshPart2
+    3300016: WingsFuselageNoCanopyTEST_MeshPart3
+    3300018: WingsFuselageNoCanopyTEST_MeshPart4
+    4300000: Antenna
+    4300002: Rudder
+    4300004: RudderDetail
+    4300006: WingsFuselageNoCanopyTEST_MeshPart0
+    4300008: WingsFuselageNoCanopyTEST_MeshPart1
+    4300010: WingsFuselageNoCanopyTEST_MeshPart2
+    4300012: WingsFuselageNoCanopyTEST_MeshPart3
+    4300014: WingsFuselageNoCanopyTEST_MeshPart4
+    4300016: Canopy
+    4300018: BoosterWing
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: a883a8d696909b9469f7e3ea50d27384, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: 4d2007eb0df378845bccfd567d76e487, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m0JoinedMaterial__16
+    second: {fileID: 2100000, guid: 1cd27191ff7f5b14588611d79fc527cf, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
