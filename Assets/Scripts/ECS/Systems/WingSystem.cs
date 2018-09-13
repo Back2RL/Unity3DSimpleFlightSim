@@ -24,7 +24,19 @@ public class WingSystem : ComponentSystem {
             // Wing Lift
             float liftCoefficient = Vector3.Dot(entry.Transform.up, movForwardDir);                                               // cl: temporary lift Coefficient from angle of attack
             float liftForce = -liftCoefficient * entry.WingData.lift * 1.2041f * 0.5f * currVel.sqrMagnitude * entry.WingData.wingArea;                   // cl * density / 2 * v² * A (lift = multiplier * density/2)
-            entry.WingData.Rigidbody.AddForceAtPosition(movUpDir * liftForce, entry.Transform.position, ForceMode.Force);
+
+
+            float wingAreaSqrRoot = Mathf.Sqrt(entry.WingData.wingArea);
+            float liftCenterOffset = (0.5f * wingAreaSqrRoot) * 0.33f;
+
+            Vector3 moveDirToWing = Vector3.ProjectOnPlane(movForwardDir, entry.Transform.up).normalized;
+            
+            Vector3 forcePosition =
+                Vector3.Lerp(entry.Transform.position, moveDirToWing + entry.Transform.position, liftCenterOffset);
+            
+            //Debug.DrawRay(entry.Transform.position, moveDirToWing*10f,Color.red);
+            
+            entry.WingData.Rigidbody.AddForceAtPosition(movUpDir * liftForce, forcePosition, ForceMode.Force);
 
             // direction of airresistance
             Vector3 dragDir = -movForwardDir;
