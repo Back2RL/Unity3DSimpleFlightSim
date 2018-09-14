@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4626,73 +4626,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb2ee25e836c1684abe561fd49fa5866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 1777269442}
-  inputEnabled: 1
-  switchToInvertedControlsAngle: 180
-  rollSensitivity: 1
-  gravityCompensation: 0
-  thrusters:
-  - {fileID: 1721501335}
-  - {fileID: 555019526}
-  maxThrust: 37500
-  thrustBlendSpeed: 1
+  Camera: {fileID: 1777269442}
+  InputEnabled: 1
+  SwitchToInvertedControlsAngle: 135
+  RollSensitivity: 0.001
+  GravityCompensation: 0
+  Thrusters: []
+  MaxThrust: 10000
+  ThrustBlendSpeed: 0.25
   LeftWing: {fileID: 1326381418}
   RightWing: {fileID: 1592840375}
-  rollExponent: 1
-  rollInputCurve:
+  RollExponent: 0.5
+  RollInputCurve:
     serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: -1
-      value: -1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: -0.50934833
-      value: -1.0006695
-      inSlope: 0.0064447867
-      outSlope: 0.0064447867
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.49669138
-      value: 1.0046363
-      inSlope: 0.028748404
-      outSlope: 0.028748404
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.99656945
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+    m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 0
+    m_RotationOrder: 4
   Elevator: {fileID: 974104579}
-  pitchExponent: 1
+  PitchExponent: 1.5
   Rudder: {fileID: 1622663601}
-  yawExponent: 1
-  thrustInputText: {fileID: 1267171146}
-  currentForwardSpeedText: {fileID: 751640303}
-  localMovementDir: {x: 0, y: 0, z: 0}
-  localTargetDir: {x: 0, y: 0, z: 0}
-  localAircraftfoward: {x: 0, y: 0, z: 0}
-  rightProjection: {x: 0, y: 0, z: 0}
-  xDirectionDrift: 0
-  direction: 0
+  YawExponent: 1.5
+  ThrustInputText: {fileID: 1267171146}
+  CurrentForwardSpeedText: {fileID: 751640303}
+  LocalMovementDir: {x: 0, y: 0, z: 0}
+  LocalTargetDir: {x: 0, y: 0, z: 0}
+  LocalAircraftfoward: {x: 0, y: 0, z: 0}
+  RightProjection: {x: 0, y: 0, z: 0}
+  XDirectionDrift: 0
+  Direction: 0
 --- !u!114 &170973117
 MonoBehaviour:
   m_ObjectHideFlags: 0
