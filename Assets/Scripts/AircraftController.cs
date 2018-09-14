@@ -1,59 +1,57 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AircraftController : MonoBehaviour
 {
     // Camera
-    public Camera camera;
+    public Camera Camera;
     private Vector3 _screenCenter;
 
     // Controls
-    public bool inputEnabled = true;
-    public float switchToInvertedControlsAngle = 135.0f;
+    public bool InputEnabled = true;
+    public float SwitchToInvertedControlsAngle = 135.0f;
     private float _precalculatedAngle;
-    public float rollSensitivity = 0.001f;
+    public float RollSensitivity = 0.001f;
 
-    public bool gravityCompensation = false;
-    private bool _keyPressedPreviousTick = false;
+    public bool GravityCompensation;
+    private bool _keyPressedPreviousTick;
 
     // Aerodynamics
     private Rigidbody _aircraft;
 
     // Engine
-    public GameObject[] thrusters;
-    public float maxThrust = 10000.0f;
-    public float thrustBlendSpeed = 0.25f; // how fast thrustMax increases/decreases (default: 4 seconds to max thrustMax)
+    public GameObject[] Thrusters;
+    public float MaxThrust = 10000.0f;
+    public float ThrustBlendSpeed = 0.25f; // how fast thrustMax increases/decreases (default: 4 seconds to max thrustMax)
     private float _engineThrottle;
 
     // Wings
     public GameObject LeftWing;
     public GameObject RightWing;
-    public float rollExponent = 0.5f;
-    public AnimationCurve rollInputCurve;
+    public float RollExponent = 0.5f;
+    public AnimationCurve RollInputCurve;
 
     // Elevator
     public GameObject Elevator;
-    public float pitchExponent = 1.5f;
+    public float PitchExponent = 1.5f;
 
     // Rudder
     public GameObject Rudder;
-    public float yawExponent = 1.5f;
+    public float YawExponent = 1.5f;
 
     // UI
-    public Text thrustInputText;
-    public Text currentForwardSpeedText;
+    public Text ThrustInputText;
+    public Text CurrentForwardSpeedText;
 
 
     // DEBUGGING
-    public Vector3 localMovementDir;
-    public Vector3 localTargetDir;
-    public Vector3 localAircraftfoward;
-    public Vector3 rightProjection;
-    public float xDirectionDrift;
-    public float direction;
+    public Vector3 LocalMovementDir;
+    public Vector3 LocalTargetDir;
+    public Vector3 LocalAircraftfoward;
+    public Vector3 RightProjection;
+    public float XDirectionDrift;
+    public float Direction;
 
 
     // Use this for initialization
@@ -61,14 +59,14 @@ public class AircraftController : MonoBehaviour
     {
         _aircraft = GetComponent<Rigidbody>();
         _screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f);
-        _precalculatedAngle = Mathf.Cos(switchToInvertedControlsAngle / 180.0f * Mathf.PI);
+        _precalculatedAngle = Mathf.Cos(SwitchToInvertedControlsAngle / 180.0f * Mathf.PI);
     }
 
     void Update()
     {
-        thrustInputText.text = "Thrust = " + _engineThrottle.ToString();
+        ThrustInputText.text = "Thrust = " + _engineThrottle;
         Vector3 forwardVel = Vector3.Project(_aircraft.velocity, _aircraft.transform.forward);
-        currentForwardSpeedText.text = "Speed = " + (forwardVel.magnitude * 3.6f).ToString() + " kph";
+        CurrentForwardSpeedText.text = "Speed = " + (forwardVel.magnitude * 3.6f) + " kph";
     }
 
     void FixedUpdate()
@@ -76,7 +74,7 @@ public class AircraftController : MonoBehaviour
         Vector3 currVel = _aircraft.velocity; // current Velocity in Globalspace
         Vector3 globalMovementDir = currVel.normalized;
 
-        if (inputEnabled)
+        if (InputEnabled)
         {
             Vector3 mousePosition = Input.mousePosition;
             Vector3 mouseDirection = mousePosition - _screenCenter;
@@ -86,21 +84,21 @@ public class AircraftController : MonoBehaviour
 
             mouseDirection.z = 1.0f;
 
-            Vector3 targetDirection = camera.transform.TransformDirection(mouseDirection);
+            Vector3 targetDirection = Camera.transform.TransformDirection(mouseDirection);
 
             targetDirection.Normalize();
-            Debug.DrawRay(camera.transform.position, targetDirection * 1000, Color.blue);
+            Debug.DrawRay(Camera.transform.position, targetDirection * 1000, Color.blue);
 
             Vector3 movDir = currVel.normalized;
 
-            float dotTargetMov = Vector3.Dot(movDir, targetDirection);
+            float unused = Vector3.Dot(movDir, targetDirection);
 
-            Debug.DrawRay(camera.transform.position, movDir * 1000, Color.green);
-            Debug.DrawRay(camera.transform.position, _aircraft.transform.forward * 1000, Color.red);
+            Debug.DrawRay(Camera.transform.position, movDir * 1000, Color.green);
+            Debug.DrawRay(Camera.transform.position, _aircraft.transform.forward * 1000, Color.red);
 
             float dotTargetAircraftUp = Vector3.Dot(_aircraft.transform.up, targetDirection);
 
-            float dotTargetAircraftRight = 0;
+            float dotTargetAircraftRight;
             if (dotTargetAircraftUp < _precalculatedAngle)
             {
                 dotTargetAircraftRight = -Vector3.Dot(_aircraft.transform.right, targetDirection);
@@ -114,47 +112,47 @@ public class AircraftController : MonoBehaviour
             bool isKeyDown = !Input.GetKeyUp("x");
             if (!isKeyDown && _keyPressedPreviousTick)
             {
-                gravityCompensation = !gravityCompensation;
+                GravityCompensation = !GravityCompensation;
             }
             _keyPressedPreviousTick = isKeyDown;
             // \TESTING
-            if (gravityCompensation)
+            if (GravityCompensation)
             {
                 { // Roll input using yaw-drift compensation to negate the effect of gravity
 
                     // convert globalMovementDirection to localMovementDirection
-                    localMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
+                    LocalMovementDir = _aircraft.transform.InverseTransformDirection(globalMovementDir);
 
                     // convert globalTargetDirection to localMovementDirection
-                    localTargetDir = _aircraft.transform.InverseTransformDirection(targetDirection);
+                    LocalTargetDir = _aircraft.transform.InverseTransformDirection(targetDirection);
 
                     // project localMovementDir to local Right-Up-plane using the Forward-direction as normal
-                    Vector3 localDriftVelocity = Vector3.ProjectOnPlane(localMovementDir, Vector3.forward);
+                    Vector3 localDriftVelocity = Vector3.ProjectOnPlane(LocalMovementDir, Vector3.forward);
 
                     // Draw Debug ray
                     Debug.DrawRay(_aircraft.transform.position,
                         _aircraft.transform.TransformDirection(localDriftVelocity * 1000), Color.cyan);
 
                     // calculate the amount of Drift in Right-Direction
-                    xDirectionDrift = Vector3.Dot(localDriftVelocity, Vector3.right);
+                    XDirectionDrift = Vector3.Dot(localDriftVelocity, Vector3.right);
                 }
             }
             else
             {
                 // direct input using target direction, without gravity compensation
-                float directRollInput = -Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), rollExponent);
+                float directRollInput = -Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), RollExponent);
 
-                xDirectionDrift = directRollInput;
+                XDirectionDrift = directRollInput;
             }
 
             // pitch controlinput TODO: add curve
-            float pitch = -Mathf.Sign(dotTargetAircraftUp) * Mathf.Pow(Mathf.Abs(dotTargetAircraftUp), pitchExponent);
+            float pitch = -Mathf.Sign(dotTargetAircraftUp) * Mathf.Pow(Mathf.Abs(dotTargetAircraftUp), PitchExponent);
 
             // roll controlinput from curve
-            float roll = rollInputCurve.Evaluate(xDirectionDrift);
+            float roll = RollInputCurve.Evaluate(XDirectionDrift);
 
             // yaw controlinput TODO: add curve
-            float yaw = Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), yawExponent);
+            float yaw = Mathf.Sign(dotTargetAircraftRight) * Mathf.Pow(Mathf.Abs(dotTargetAircraftRight), YawExponent);
 
             // add player Keyinput
             roll = Mathf.Clamp(roll - 2 * Input.GetAxis("Horizontal"), -1.0f, 1.0f);
@@ -165,11 +163,11 @@ public class AircraftController : MonoBehaviour
             Rudder.transform.localRotation = Quaternion.LookRotation(new Vector3(0, 0, 1) + new Vector3(1, 0, 0) * -yaw, new Vector3(-1, 0, 0));
 
             // Thrusters
-            float thrustDelta = Input.GetAxis("Vertical") * Time.fixedDeltaTime * thrustBlendSpeed;
+            float thrustDelta = Input.GetAxis("Vertical") * Time.fixedDeltaTime * ThrustBlendSpeed;
             _engineThrottle = Mathf.Clamp(_engineThrottle + thrustDelta, 0, 1);
-            foreach (GameObject thruster in thrusters)
+            foreach (GameObject thruster in Thrusters)
             {
-                _aircraft.AddForceAtPosition(thruster.transform.forward * maxThrust * _engineThrottle,
+                _aircraft.AddForceAtPosition(thruster.transform.forward * MaxThrust * _engineThrottle,
                     thruster.transform.position, ForceMode.Force);
             }
         }
